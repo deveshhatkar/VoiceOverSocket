@@ -17,12 +17,8 @@ class Phone:
     #Socket Initializations
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     connected_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    IP_ADDRESS = "192.168.0.103"
+    IP_ADDRESS = "192.168.0.105"
     PORT_NUMBER = 40404
-
-    #Threading Initializations
-    recorder_thread = threading.Thread(self.recorder_thread())
-    receiver_thread = threading.Thread(self.receiver_thread())
 
     #Sound Frames storage variables
     sending_frames = []
@@ -33,7 +29,6 @@ class Phone:
     waveFile.setnchannels(CHANNELS)
     waveFile.setsampwidth(audio.get_sample_size(FORMAT))
     waveFile.setframerate(RATE)
-
     #determines either sending or recieving
     flag = 0 # 0-active receiver_thread() / 1-active recorder_thread()
 
@@ -42,23 +37,24 @@ class Phone:
     def __init__(self):
 
         #Socket Connection code
-        self.server_socket.bind(("192.168.0.103", 40404))
+        self.server_socket.bind((self.IP_ADDRESS, self.PORT_NUMBER))
         self.server_socket.listen(5)
         (self.connected_socket, address) = self.server_socket.accept()
 
     #------------------------------------------
 
-    def on_key_press(key):
+    def on_key_press(key, self):
         #Verify that only 'G' is pressed otherwise do nothing.
         #This method sets the flag to 1. Indicating 'recorder_thread()'
             #becomes active.
         try:
             if(key.char == 'g'):
-                self.flag = 1        
-
+                self.flag = 1
+        except:
+            print ("a")
     #------------------------------------------
 
-    def on_key_release(key):
+    def on_key_release(key, self):
         #Verify that only 'G' is released otherwise do nothing.
         if(key.char == 'g'):
         
@@ -74,7 +70,7 @@ class Phone:
 
     #-------------------------------------------
 
-    def recorder_thread():
+    def recorder_thread(self):
         stream = audio.open(format=FORMAT, channels=CHANNELS,
                             rate=RATE, input=True,
                             frames_per_buffer=CHUNK)
@@ -88,7 +84,7 @@ class Phone:
 
     #-------------------------------------------
 
-    def receiver_thread():
+    def receiver_thread(self):
         while True:
             self.receiving_frames = [] #Emptying the receiving frames
             while(self.connected_socket.recv(1) != ''):
@@ -137,6 +133,9 @@ class Phone:
         #Create a 'Phone' object.
 
         #starting the 'recorder_thread()'thread and 'receiver_thread()'thread
+        recorder_thread = threading.Thread(recorder_thread())
+        receiver_thread = threading.Thread(receiver_thread())
+
         self.recoder_thread.start()
         self.receiver_thread.start()
 
