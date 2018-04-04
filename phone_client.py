@@ -17,8 +17,8 @@ class Phone:
     #Socket Initializations
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     connected_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    IP_ADDRESS = "192.168.0.105"
-    PORT_NUMBER = 40404
+    IP_ADDRESS = "localhost"
+    PORT_NUMBER = 40400
 
     #Sound Frames storage variables
     sending_frames = []
@@ -37,7 +37,7 @@ class Phone:
     def __init__(self):
 
         #Socket Connection code
-        self.connected_socket.connect((self.IP_ADDRESS, self.PORT))
+        self.connected_socket.connect((self.IP_ADDRESS, self.PORT_NUMBER))
 
     #------------------------------------------
 
@@ -121,9 +121,9 @@ class Phone:
 
     #-------------------------------------------
 
-    def __del__(self):
-        self.recoder_thread.stop()
-        self.receiver_thread.stop()
+##    def __del__(self):
+##        self.recoder_thread.stop()
+##        self.receiver_thread.stop()
 
     #-------------------------------------------
 
@@ -131,11 +131,11 @@ class Phone:
         #Create a 'Phone' object.
 
         #starting the 'recorder_thread()'thread and 'receiver_thread()'thread
-        recorder_thread = threading.Thread(recorder_thread())
-        receiver_thread = threading.Thread(receiver_thread())
+        thread1 = threading.Thread(self.recorder_thread)
+        thread2 = threading.Thread(self.receiver_thread)
 
-        self.recoder_thread.start()
-        self.receiver_thread.start()
+        thread1.start()
+        thread2.start()
 
         #Implement Keyboard Listener for listening to the 'G' key.
         with keyboard.listener(
