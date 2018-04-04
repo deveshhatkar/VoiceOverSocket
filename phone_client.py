@@ -31,6 +31,9 @@ class Phone:
     #determines either sending or recieving
     flag = 0
 
+
+    
+
     def __init__(self):
 
         #Socket Connection code
